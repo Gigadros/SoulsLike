@@ -5,10 +5,9 @@ using UnityEngine;
 namespace SA {
 	public class InputHandler : MonoBehaviour {
 
-		float vertical;
-		float horizontal;
-		bool runInput;
-
+		float vertical, horizontal;
+		bool a_input, b_input, x_input, y_input, rb_input, rt_input, lb_input, lt_input;
+		float rt_axis, lt_axis;
 
 		StateManager states;
 		CameraManager camManager;
@@ -39,7 +38,20 @@ namespace SA {
 		void GetInput () {
 			vertical = Input.GetAxis ("Vertical");
 			horizontal = Input.GetAxis ("Horizontal");
-			runInput = Input.GetButton ("RunInput");
+			a_input = Input.GetButton ("a_input");
+			b_input = Input.GetButton ("b_input");
+			x_input = Input.GetButton ("x_input");
+			y_input = Input.GetButtonUp ("y_input");
+			rt_input = Input.GetButton ("rt_input");
+			rt_axis = Input.GetAxis ("rt_input");
+			if (rt_axis != 0)
+				rt_input = true;
+			lt_input = Input.GetButton ("lt_input");
+			lt_axis = Input.GetAxis ("lt_input");
+			if (lt_axis != 0)
+				lt_input = true;
+			rb_input = Input.GetButton ("rb_input");
+			lb_input = Input.GetButton ("lb_input");
 		}
 
 		void UpdateStates () {
@@ -52,10 +64,20 @@ namespace SA {
 			float m = Mathf.Abs (horizontal) + Mathf.Abs (vertical);
 			states.moveAmount = Mathf.Clamp01 (m);
 
-			if (runInput) {
-				states.run = states.moveAmount > 0;
+			if (b_input) {
+				states.isRunning = states.moveAmount > 0;
 			} else {
-				states.run = false;
+				states.isRunning = false;
+			}
+
+			states.rb = rb_input;
+			states.rt = rt_input;
+			states.lb = lb_input;
+			states.lt = lt_input;
+
+			if (y_input) {
+				states.isTwoHanded = !states.isTwoHanded;
+				states.HandleTwoHanded ();
 			}
 		}
 	}
