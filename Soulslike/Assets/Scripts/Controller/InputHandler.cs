@@ -8,6 +8,7 @@ namespace SA {
 		float vertical, horizontal;
 		bool a_input, b_input, x_input, y_input, rb_input, rt_input, lb_input, lt_input;
 		float rt_axis, lt_axis;
+		bool leftAxis_down, rightAxis_down;
 
 		StateManager states;
 		CameraManager camManager;
@@ -41,7 +42,7 @@ namespace SA {
 			a_input = Input.GetButton ("a_input");
 			b_input = Input.GetButton ("b_input");
 			x_input = Input.GetButton ("x_input");
-			y_input = Input.GetButtonUp ("y_input");
+			y_input = Input.GetButtonDown ("y_input");
 			rt_input = Input.GetButton ("rt_input");
 			rt_axis = Input.GetAxis ("rt_input");
 			if (rt_axis != 0)
@@ -52,6 +53,8 @@ namespace SA {
 				lt_input = true;
 			rb_input = Input.GetButton ("rb_input");
 			lb_input = Input.GetButton ("lb_input");
+			rightAxis_down = Input.GetButtonDown ("ra_input");
+			leftAxis_down = Input.GetButtonDown ("la_input");
 		}
 
 		void UpdateStates () {
@@ -64,11 +67,17 @@ namespace SA {
 			float m = Mathf.Abs (horizontal) + Mathf.Abs (vertical);
 			states.moveAmount = Mathf.Clamp01 (m);
 
-			if (b_input) {
-				states.isRunning = states.moveAmount > 0;
-			} else {
-				states.isRunning = false;
-			}
+			states.rollInput = b_input;
+
+//			if (b_input) {
+//				states.isRunning = states.moveAmount > 0;
+//				if (states.isRunning) {
+//					states.lockOn = false;
+//					camManager.lockOn = false;
+//				}
+//			} else {
+//				states.isRunning = false;
+//			}
 
 			states.rb = rb_input;
 			states.rt = rt_input;
@@ -78,6 +87,14 @@ namespace SA {
 			if (y_input) {
 				states.isTwoHanded = !states.isTwoHanded;
 				states.HandleTwoHanded ();
+			}
+
+			if (leftAxis_down) {
+				states.lockOn = !states.lockOn;
+				if (states.lockOnTarget == null)
+					states.lockOn = false;
+				camManager.lockOnTarget = states.lockOnTarget.transform;
+				camManager.lockOn = states.lockOn;
 			}
 		}
 	}

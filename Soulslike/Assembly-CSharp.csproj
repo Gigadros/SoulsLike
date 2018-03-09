@@ -55,6 +55,7 @@
      <Compile Include="Assets\Scripts\Controller\CameraManager.cs" />
      <Compile Include="Assets\Scripts\Controller\InputHandler.cs" />
      <Compile Include="Assets\Scripts\Controller\StateManager.cs" />
+     <Compile Include="Assets\Scripts\Enemies\EnemyTarget.cs" />
      <Compile Include="Assets\Scripts\KeepBool.cs" />
      <Compile Include="Assets\Scripts\Utilities\Helper.cs" />
  <Reference Include="UnityEngine.UI">
