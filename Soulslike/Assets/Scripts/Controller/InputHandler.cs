@@ -20,7 +20,7 @@ namespace SA {
 			states.Init ();
 
 			camManager = CameraManager.singleton;
-			camManager.Init (this.transform);
+			camManager.Init (states);
 		}
 
 		void Update () {
@@ -61,7 +61,8 @@ namespace SA {
 			states.vertical = vertical;
 			states.horizontal = horizontal;
 
-			Vector3 v = vertical * camManager.transform.forward;
+//			Vector3 v = vertical * camManager.transform.forward;  -changed to fix lock on movement speed bug for targets above or below player
+			Vector3 v = vertical * new Vector3 (camManager.transform.forward.x, 0, camManager.transform.forward.z).normalized;
 			Vector3 h = horizontal * camManager.transform.right;
 			states.moveDir = (v + h).normalized;
 			float m = Mathf.Abs (horizontal) + Mathf.Abs (vertical);
@@ -89,11 +90,12 @@ namespace SA {
 				states.HandleTwoHanded ();
 			}
 
-			if (leftAxis_down) {
+			if (rightAxis_down) {
 				states.lockOn = !states.lockOn;
 				if (states.lockOnTarget == null)
 					states.lockOn = false;
-				camManager.lockOnTarget = states.lockOnTarget.transform;
+				camManager.lockOnTarget = states.lockOnTarget;
+				//states.lockOnTransform = camManager.lockOnTransform;
 				camManager.lockOn = states.lockOn;
 			}
 		}

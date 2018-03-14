@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace SA {
 	public class StateManager : MonoBehaviour {
+
 		[Header("Init")]
 		public GameObject activeModel;
 		[Header("Inputs")]
@@ -18,7 +19,7 @@ namespace SA {
 		public float runSpeed = 5.5f;
 		public float rotateSpeed = 9;
 		public float toGround = 0.5f;
-		public float rollSpeed = 1.5f;
+		public float rollSpeed = 12;
 		[Header("States")]
 		public bool onGround;
 		public bool isRunning;
@@ -28,6 +29,8 @@ namespace SA {
 		public bool isTwoHanded;
 		[Header("Other")]
 		public EnemyTarget lockOnTarget;
+		public Transform lockOnTransform;
+		public AnimationCurve roll_curve;
 		[HideInInspector]
 		public Animator anim;
 		[HideInInspector]
@@ -95,7 +98,8 @@ namespace SA {
 			if (!canMove)
 				return;
 
-			a_hook.rm_muliplier = 1;
+//			a_hook.rm_muliplier = 1;
+			a_hook.CloseRoll ();
 			HangleRolls ();
 
 			anim.applyRootMotion = false;
@@ -110,7 +114,7 @@ namespace SA {
 			if (isRunning)
 				lockOn = false;
 
-			Vector3 targetDir = (!lockOn) ? moveDir : lockOnTarget.transform.position - transform.position;
+			Vector3 targetDir = (!lockOn) ? moveDir : (lockOnTransform != null) ? lockOnTransform.position - transform.position : moveDir;
 			targetDir.y = 0;
 			if (targetDir == Vector3.zero)
 				targetDir = transform.forward;
@@ -178,16 +182,19 @@ namespace SA {
 					moveDir = transform.forward;
 				Quaternion targetRot = Quaternion.LookRotation (moveDir);
 				transform.rotation = targetRot;
+				a_hook.rm_muliplier = rollSpeed;
+				a_hook.InitForRoll ();
+			} else {
+				a_hook.rm_muliplier = 2.5f;
 			}
-
-			a_hook.rm_muliplier = rollSpeed;
+				
 
 			anim.SetFloat ("vertical", v);
 			anim.SetFloat ("horizontal", h);
 
 			canMove = false;
 			inAction = true;
-			anim.CrossFade ("Rolls", 0.3f);
+			anim.CrossFade ("Rolls", 0.2f);
 		}
 
 		void HandleMovementAnimations () {

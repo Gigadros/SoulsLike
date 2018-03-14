@@ -11,12 +11,14 @@ namespace SA {
 		public float controllerSpeed = 5;
 
 		public Transform target;
-		public Transform lockOnTarget;
+		public EnemyTarget lockOnTarget;
+		public Transform lockOnTransform;
 
 		[HideInInspector]
 		public Transform pivot;
 		[HideInInspector]
 		public Transform camTrans;
+		StateManager states;
 
 		float turnSmoothing = 0.1f;
 		public float minAngle = -35;
@@ -29,8 +31,11 @@ namespace SA {
 		public float lookAngle;
 		public float tiltAngle;
 
-		public void Init (Transform t) {
-			target = t;
+		bool usedRightAxis;
+
+		public void Init (StateManager st) {
+			states = st;
+			target = st.transform;
 
 			camTrans = Camera.main.transform;
 			pivot = camTrans.parent;
@@ -44,6 +49,30 @@ namespace SA {
 			float c_v = Input.GetAxis ("RightAxis Y");
 
 			float targetSpeed = mouseSpeed;
+
+			if (lockOnTarget != null) {
+				if (lockOnTransform == null) {
+					lockOnTransform = lockOnTarget.GetTarget ();
+					states.lockOnTransform = lockOnTransform;
+				}
+				if (Mathf.Abs(c_h) > 0.6f) {
+					if (!usedRightAxis) {
+						if (c_h > 0) {
+							lockOnTransform = lockOnTarget.GetTarget ();
+						} else {
+							lockOnTransform = lockOnTarget.GetTarget (true);
+						}
+						states.lockOnTransform = lockOnTransform;
+						usedRightAxis = true;
+					}
+				}
+			}
+
+			if (usedRightAxis) {
+				if (Mathf.Abs(c_h) < 0.6f) {
+					usedRightAxis = false;
+				}
+			}
 
 			if (c_h != 0 || c_v != 0) {
 				h = c_h;
@@ -76,9 +105,9 @@ namespace SA {
 
 
 			if (lockOn && lockOnTarget != null) {
-				Vector3 targetDir = lockOnTarget.position - transform.position;
+				Vector3 targetDir = lockOnTransform.position - transform.position;
 				targetDir.Normalize ();
-				targetDir.y = 0;
+//				targetDir.y = 0;
 
 				if (targetDir == Vector3.zero)
 					targetDir = transform.forward;
@@ -88,7 +117,10 @@ namespace SA {
 				return;
 			}
 			lookAngle += smoothX * targetSpeed;
-			transform.rotation = Quaternion.Euler (0, lookAngle, 0);
+			if (transform.rotation.x != 0)
+				transform.rotation = Quaternion.Slerp (transform.rotation, Quaternion.Euler (0, lookAngle, 0), d * 9);
+			else
+				transform.rotation = Quaternion.Euler (0, lookAngle, 0);
 		}
 
 		public static CameraManager singleton;
