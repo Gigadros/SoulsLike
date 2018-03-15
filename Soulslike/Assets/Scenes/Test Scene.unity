@@ -962,6 +962,8 @@ GameObject:
   - component: {fileID: 1900086981}
   - component: {fileID: 1900086980}
   - component: {fileID: 1900086979}
+  - component: {fileID: 1900086984}
+  - component: {fileID: 1900086985}
   m_Layer: 0
   m_Name: Controller
   m_TagString: Untagged
@@ -1002,6 +1004,7 @@ MonoBehaviour:
   canMove: 0
   isTwoHanded: 0
   lockOnTarget: {fileID: 1547788215}
+  lockOnTransform: {fileID: 0}
   roll_curve:
     serializedVersion: 2
     m_Curve:
@@ -1035,6 +1038,8 @@ MonoBehaviour:
   anim: {fileID: 0}
   rigid: {fileID: 0}
   a_hook: {fileID: 0}
+  actionManager: {fileID: 0}
+  inventoryManager: {fileID: 0}
   delta: 0
   ignoreLayers:
     serializedVersion: 2
@@ -1092,6 +1097,50 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1900086984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1900086978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17b72a0369370784ba328322253d44f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  actionSlots:
+  - input: 0
+    targetAnim: 
+  - input: 1
+    targetAnim: 
+  - input: 2
+    targetAnim: 
+  - input: 3
+    targetAnim: 
+--- !u!114 &1900086985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1900086978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4be6d49bc61ca884f8dddc28cb3b8ac3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  curWeapon:
+    actions:
+    - input: 0
+      targetAnim: oh_attack_1
+    - input: 2
+      targetAnim: oh_attack_3
+    - input: 3
+      targetAnim: parry
+    twoHanded_actions:
+    - input: 0
+      targetAnim: th_attack_1
+    - input: 2
+      targetAnim: th_attack_2
 --- !u!1 &1935235965
 GameObject:
   m_ObjectHideFlags: 0

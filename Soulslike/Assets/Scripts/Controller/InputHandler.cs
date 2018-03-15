@@ -10,6 +10,8 @@ namespace SA {
 		float rt_axis, lt_axis;
 		bool leftAxis_down, rightAxis_down;
 
+		float b_timer, rt_timer, lt_timer;
+
 		StateManager states;
 		CameraManager camManager;
 
@@ -26,6 +28,7 @@ namespace SA {
 		void Update () {
 			delta = Time.deltaTime;
 			states.Tick (delta);
+			ResetInputNStates ();
 		}
 
 		void FixedUpdate () {
@@ -55,6 +58,9 @@ namespace SA {
 			lb_input = Input.GetButton ("lb_input");
 			rightAxis_down = Input.GetButtonDown ("ra_input");
 			leftAxis_down = Input.GetButtonDown ("la_input");
+
+			if (b_input)
+				b_timer += delta;
 		}
 
 		void UpdateStates () {
@@ -68,17 +74,17 @@ namespace SA {
 			float m = Mathf.Abs (horizontal) + Mathf.Abs (vertical);
 			states.moveAmount = Mathf.Clamp01 (m);
 
-			states.rollInput = b_input;
 
-//			if (b_input) {
-//				states.isRunning = states.moveAmount > 0;
-//				if (states.isRunning) {
-//					states.lockOn = false;
-//					camManager.lockOn = false;
-//				}
-//			} else {
-//				states.isRunning = false;
-//			}
+			if (b_input && b_timer > 0.5f) {
+				states.isRunning = states.moveAmount > 0;
+				if (states.isRunning) {
+					states.lockOn = false;
+					camManager.lockOn = false;
+				}
+			}
+
+			if (!b_input && b_timer > 0 && b_timer < 0.5f)
+				states.rollInput = true;
 
 			states.rb = rb_input;
 			states.rt = rt_input;
@@ -98,6 +104,17 @@ namespace SA {
 				//states.lockOnTransform = camManager.lockOnTransform;
 				camManager.lockOn = states.lockOn;
 			}
+		}
+
+		void ResetInputNStates () {
+			if (!b_input)
+				b_timer = 0;
+
+			if (states.rollInput)
+				states.rollInput = false;
+
+			if (states.isRunning)
+				states.isRunning = false;
 		}
 	}
 }

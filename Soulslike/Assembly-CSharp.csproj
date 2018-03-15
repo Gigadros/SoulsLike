@@ -51,9 +51,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\Controller\ActionManager.cs" />
      <Compile Include="Assets\Scripts\Controller\AnimatorHook.cs" />
      <Compile Include="Assets\Scripts\Controller\CameraManager.cs" />
      <Compile Include="Assets\Scripts\Controller\InputHandler.cs" />
+     <Compile Include="Assets\Scripts\Controller\InventoryManager.cs" />
      <Compile Include="Assets\Scripts\Controller\StateManager.cs" />
      <Compile Include="Assets\Scripts\Enemies\EnemyTarget.cs" />
      <Compile Include="Assets\Scripts\KeepBool.cs" />
