@@ -194,6 +194,10 @@ Transform:
   m_Father: {fileID: 1935235966}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &122870342 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 100000, guid: 704ced9c989b0e942bda413efdb7d993, type: 3}
+  m_PrefabInternal: {fileID: 1081475431}
 --- !u!1001 &301520350
 Prefab:
   m_ObjectHideFlags: 0
@@ -992,6 +996,7 @@ MonoBehaviour:
   lb: 0
   lt: 0
   rollInput: 0
+  itemInput: 0
   moveSpeed: 3.5
   runSpeed: 5.5
   rotateSpeed: 9
@@ -1003,6 +1008,7 @@ MonoBehaviour:
   inAction: 0
   canMove: 0
   isTwoHanded: 0
+  usingItem: 0
   lockOnTarget: {fileID: 1547788215}
   lockOnTransform: {fileID: 0}
   roll_curve:
@@ -1117,6 +1123,9 @@ MonoBehaviour:
     targetAnim: 
   - input: 3
     targetAnim: 
+  consumableItem:
+    targetAnim: use_item
+    item_id: 
 --- !u!114 &1900086985
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1141,6 +1150,7 @@ MonoBehaviour:
       targetAnim: th_attack_1
     - input: 2
       targetAnim: th_attack_2
+    weaponModel: {fileID: 122870342}
 --- !u!1 &1935235965
 GameObject:
   m_ObjectHideFlags: 0

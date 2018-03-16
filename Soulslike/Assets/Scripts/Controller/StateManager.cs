@@ -13,7 +13,7 @@ namespace SA {
 		public float moveAmount;
 		public Vector3 moveDir;
 		public bool rb, rt, lb, lt;
-		public bool rollInput;
+		public bool rollInput, itemInput;
 		[Header("Stats")]
 		public float moveSpeed = 3.5f;
 		public float runSpeed = 5.5f;
@@ -27,6 +27,7 @@ namespace SA {
 		public bool inAction;
 		public bool canMove;
 		public bool isTwoHanded;
+		public bool usingItem;
 		[Header("Other")]
 		public EnemyTarget lockOnTarget;
 		public Transform lockOnTransform;
@@ -89,7 +90,11 @@ namespace SA {
 			delta = d;
 			rigid.drag = (moveAmount > 0 || !onGround) ? 0 : 4;
 
+			usingItem = anim.GetBool ("interacting");
+
+			DetectItemAction ();
 			DetectAction ();
+			inventoryManager.curWeapon.weaponModel.SetActive (!usingItem);
 
 			if (inAction) {
 				anim.applyRootMotion = true;
@@ -115,6 +120,11 @@ namespace SA {
 			anim.applyRootMotion = false;
 
 			float targetSpeed = moveSpeed;
+			if (usingItem) {
+				isRunning = false;
+				moveAmount = Mathf.Clamp (moveAmount, 0, 0.45f);
+			}
+				
 			if (isRunning)
 				targetSpeed = runSpeed;
 
@@ -141,20 +151,28 @@ namespace SA {
 			}
 		}
 
+		public void DetectItemAction () {
+			if (!canMove || usingItem)
+				return;
+			if (!itemInput)
+				return;
+
+			ItemAction slot = actionManager.consumableItem;
+			string targetAnim = slot.targetAnim;
+
+			if (string.IsNullOrEmpty (targetAnim))
+				return;
+
+			usingItem = true;
+			anim.Play (targetAnim);
+		}
+
 		public void DetectAction () {
-			if (!canMove)
+			if (!canMove || usingItem)
 				return;
 			if (!rb && !rt && !lb && !lt)
 				return;
 			string targetAnim = null;
-//			if (rb)
-//				targetAnim = "oh_attack_1";
-//			if (rt)
-//				targetAnim = "oh_attack_2";
-//			if (lb)
-//				targetAnim = "oh_attack_3";
-//			if (lt)
-//				targetAnim = "th_attack_1";
 
 			Action slot = actionManager.GetActionSlot (this);
 			if (slot == null)
@@ -166,7 +184,7 @@ namespace SA {
 
 			canMove = false;
 			inAction = true;
-			anim.CrossFade (targetAnim, 0.3f);
+			anim.CrossFade (targetAnim, 0.2f);
 		}
 
 		public void Tick (float d) {
@@ -176,7 +194,7 @@ namespace SA {
 		}
 
 		void HangleRolls () {
-			if (!rollInput)
+			if (!rollInput || usingItem)
 				return;
 			float h = vertical;
 			float v = horizontal;
